@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano Student Manager</title>
+    <meta name="description" content="Manage piano students by school and generate CSV files">
+    <meta name="theme-color" content="#f05b86">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlBpYW5vIFN0dWRlbnQgTWFuYWdlciIsCiAgInNob3J0X25hbWUiOiAiUGlhbm8gU3R1ZGVudHMiLAogICJkZXNjcmlwdGlvbiI6ICJNYW5hZ2UgcGlhbm8gc3R1ZGVudHMgYnkgc2Nob29sIGFuZCBnZW5lcmF0ZSBDU1YgZmlsZXMiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZmZmZmZiIsCiAgInRoZW1lX2NvbG9yIjogIiNmMDViODYiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlNVEkwSWlCb1pXbG5hSFE5SWpFeU5DSWdkbWxsZDBKdmVEMGlNQ0F3SURFME5DQXhORFFpSUdacGJHdzlJaU5tTURWaU9EWWlQZ29nSUNBOGNtVmpkQ0IzYVdSMGFEMGlPVFlpSUdobFpXbG5hSFE5SWpNeU5TSWdlRDBpTWpRaUlIazlJakV3TGpVaUlIUjRQU0l6TVM0MklpQm1hV3hzUFNKamRYSnlaVzUwUTI5c2IzSWlMejRnSUR3dlpHVm1jejRnSUNBOGNtVmpkQ0IzYVdSMGFEMGlPRGdpSUdobFpXbG5hSFE5SWpJMElpQjRQU0l4T0NJZ2VUMGlOVEFpSUhKNFBTSTBJaUJtYVd4c1BTSmpkWEp5Wlc1MFEyOXNiM0lpTHo0Z0lEd3ZjM1puUGc9PSIsCiAgICAgICJzaXplcyI6ICIxNDR4MTQ0IiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTWpVMklpQm9aV2xuYUhROUlqSTFOaUlnZG1sbGQwSnZlRDBpTUNBd0lESTFOaUF5TlRZaUlHWnBiR3c5SWlObU1EVmlPRFlpUGdvZ0lDQThjbVZqZENCM2FXUjBhRDBpTVRrMElpQm9aV2xuYUhROUlqWTFOaUlnZUQwaU16RWlJSGs5SWpJeElpQjBlRDBpTmpReUxqUWlJR1pwYkd3OUltTjFjbkpsYm5SRGIyeHZjaUl2UGlBZ1BDOWtaV1p6UGlBZ1BISmxZM1FnZDJsa2RHZzlJakUzTmlJZ2FHVnBaMmgwUFNJME9DSWdlRDBpTkRBaUlIazlJakV3TUNJZ2NuZzlJamdpSUdacGJHdzlJbU4xY25KbGJuUkRiMnh2Y2lJdlBpQWdQQzl6ZG1jKyIsCiAgICAgICJzaXplcyI6ICIyNTZ4MjU2IiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICBdCn0=">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgdmlld0JveD0iMCAwIDE0NCAxNDQiIGZpbGw9IiNmMDViODYiPgogIDxyZWN0IHdpZHRoPSI5NiIgaGVpZ2h0PSIzMjUiIHg9IjI0IiB5PSIxMC41IiB0eD0iMzEuNiIgZmlsbD0iY3VycmVudENvbG9yIi8+ICA8L2RlZnM+ICA8cmVjdCB3aWR0aD0iODgiIGhlaWdodD0iMjQiIHg9IjE4IiB5PSI1MCIgcng9IjQiIGZpbGw9ImN1cnJlbnRDb2xvciIvPiAgPC9zdmc+">
+    
+    <!-- Mobile optimization -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Piano Students">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f05b86 0%, #ff8a9e 100%);
+            min-height: 100vh;
+            padding: 10px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #f05b86;
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .form-container {
+            padding: 20px;
+        }
+        
+        .school-section {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #0ea5e9;
+        }
+        
+        .school-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .school-header h3 {
+            color: #0c4a6e;
+            font-size: 1.1rem;
+        }
+        
+        .add-school-form {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: end;
+        }
+        
+        .add-school-form input {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        
+        .add-school-form button {
+            padding: 12px 16px;
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        .school-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding: 5px 0;
+        }
+        
+        .school-tab {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 12px 16px;
+            border-radius: 20px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .school-tab.active {
+            background: #f05b86;
+            color: white;
+        }
+        
+        .school-tab .student-count-badge {
+            background: rgba(255,255,255,0.3);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+        
+        .school-tab.active .student-count-badge {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .delete-school-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        
+        .current-school-info {
+            background: #ecfdf5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: #047857;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .student-form {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .student-form.current {
+            border-color: #f05b86;
+            box-shadow: 0 0 0 3px rgba(240, 91, 134, 0.1);
+        }
+        
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .student-number {
+            background: #f05b86;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .form-grid {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            background: white;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #f05b86;
+            box-shadow: 0 0 0 3px rgba(240, 91, 134, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .date-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .lesson-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .add-student-btn {
+            width: 100%;
+            padding: 15px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .add-student-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .add-student-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-primary {
+            background: #f05b86;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .student-count {
+            text-align: center;
+            padding: 15px;
+            background: #ecfdf5;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: #047857;
+            font-weight: 600;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #374151;
+        }
+        
+        .no-school-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+        
+        .data-info {
+            background: #fef3c7;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            color: #92400e;
+            text-align: center;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                margin: 5px;
+                border-radius: 15px;
+            }
+            
+            .form-container {
+                padding: 15px;
+            }
+            
+            .date-grid,
+            .lesson-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .add-school-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎹 Piano Students</h1>
+            <p>Organized by school with auto-save</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="data-info">
+                💾 Your data is automatically saved and will persist when you close the browser
+            </div>
+            
+            <div class="school-section">
+                <div class="school-header">
+                    <h3>🏫 Manage Schools</h3>
+                </div>
+                <div class="add-school-form">
+                    <input type="text" id="newSchoolName" placeholder="Enter school name" />
+                    <button onclick="addSchool()">Add School</button>
+                </div>
+            </div>
+            
+            <div class="school-tabs" id="schoolTabs" style="display: none;"></div>
+            
+            <div id="mainContent">
+                <div class="no-school-state">
+                    <h3>Add your first school</h3>
+                    <p>Enter a school name above to get started</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let schools = {};
+        let currentSchool = null;
+        let studentCounter = 0;
+        
+        // Load data from localStorage on startup
+        function loadData() {
+            const savedData = localStorage.getItem('pianoStudentsData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                schools = data.schools || {};
+                studentCounter = data.studentCounter || 0;
+                currentSchool = data.currentSchool || null;
+                
+                // If current school doesn't exist anymore, select first available
+                if (currentSchool && !schools[currentSchool]) {
+                    const schoolNames = Object.keys(schools);
+                    currentSchool = schoolNames.length > 0 ? schoolNames[0] : null;
+                }
+            }
+            
+            renderUI();
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            const data = {
+                schools: schools,
+                currentSchool: currentSchool,
+                studentCounter: studentCounter
+            };
+            localStorage.setItem('pianoStudentsData', JSON.stringify(data));
+        }
+        
+        function addSchool() {
+            const input = document.getElementById('newSchoolName');
+            const schoolName = input.value.trim();
+            
+            if (!schoolName) {
+                alert('Please enter a school name');
+                return;
+            }
+            
+            if (schools[schoolName]) {
+                alert('School already exists');
+                return;
+            }
+            
+            schools[schoolName] = [];
+            currentSchool = schoolName;
+            input.value = '';
+            
+            saveData();
+            renderUI();
+        }
+        
+        function deleteSchool(schoolName) {
+            if (confirm(`Are you sure you want to delete "${schoolName}" and all its students?`)) {
+                delete schools[schoolName];
+                
+                if (currentSchool === schoolName) {
+                    const remainingSchools = Object.keys(schools);
+                    currentSchool = remainingSchools.length > 0 ? remainingSchools[0] : null;
+                }
+                
+                saveData();
+                renderUI();
+            }
+        }
+        
+        function switchSchool(schoolName) {
+            currentSchool = schoolName;
+            saveData();
+            renderUI();
+        }
+        
+        function addStudent() {
+            if (!currentSchool) return;
+            
+            studentCounter++;
+            const student = {
+                id: studentCounter,
+                student_name: '',
+                start_date: '',
+                end_date: '',
+                num_lessons: '',
+                lesson_duration: '20',
+                notes: ''
+            };
+            
+            schools[currentSchool].push(student);
+            saveData();
+            renderUI();
+            
+            // Scroll to the new student form
+            setTimeout(() => {
+                const newForm = document.querySelector(`[data-student-id="${studentCounter}"]`);
+                if (newForm) {
+                    newForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        }
+        
+        function removeStudent(id) {
+            if (!currentSchool) return;
+            
+            schools[currentSchool] = schools[currentSchool].filter(s => s.id !== id);
+            saveData();
+            renderUI();
+        }
+        
+        function updateStudent(id, field, value) {
+            if (!currentSchool) return;
+            
+            const student = schools[currentSchool].find(s => s.id === id);
+            if (student) {
+                student[field] = value;
+                saveData();
+            }
+        }
+        
+        function renderUI() {
+            renderSchoolTabs();
+            renderMainContent();
+        }
+        
+        function renderSchoolTabs() {
+            const tabsContainer = document.getElementById('schoolTabs');
+            const schoolNames = Object.keys(schools);
+            
+            if (schoolNames.length === 0) {
+                tabsContainer.style.display = 'none';
+                return;
+            }
+            
+            tabsContainer.style.display = 'flex';
+            tabsContainer.innerHTML = schoolNames.map(schoolName => {
+                const studentCount = schools[schoolName].length;
+                const isActive = schoolName === currentSchool;
+                
+                return `
+                    <button class="school-tab ${isActive ? 'active' : ''}" 
+                            onclick="switchSchool('${schoolName}')">
+                        ${schoolName}
+                        <span class="student-count-badge">${studentCount}</span>
+                        <button class="delete-school-btn" 
+                                onclick="event.stopPropagation(); deleteSchool('${schoolName}')">
+                            ✕
+                        </button>
+                    </button>
+                `;
+            }).join('');
+        }
+        
+        function renderMainContent() {
+            const mainContent = document.getElementById('mainContent');
+            
+            if (!currentSchool) {
+                mainContent.innerHTML = `
+                    <div class="no-school-state">
+                        <h3>Add your first school</h3>
+                        <p>Enter a school name above to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const students = schools[currentSchool] || [];
+            const studentCount = students.length;
+            
+            mainContent.innerHTML = `
+                <div class="current-school-info">
+                    📚 ${currentSchool} - ${studentCount} student${studentCount === 1 ? '' : 's'}
+                </div>
+                
+                <button class="add-student-btn" onclick="addStudent()">
+                    ➕ Add Student to ${currentSchool}
+                </button>
+                
+                <div id="studentsContainer">
+                    ${students.length === 0 ? `
+                        <div class="empty-state">
+                            <h3>No students in ${currentSchool} yet</h3>
+                            <p>Tap "Add Student" to get started</p>
+                        </div>
+                    ` : students.map((student, index) => `
+                        <div class="student-form ${index === students.length - 1 ? 'current' : ''}" data-student-id="${student.id}">
+                            <div class="form-header">
+                                <div class="student-number">Student ${index + 1}</div>
+                                <button class="delete-btn" onclick="removeStudent(${student.id})">Delete</button>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Student Name *</label>
+                                    <input type="text" 
+                                           value="${student.student_name}" 
+                                           onchange="updateStudent(${student.id}, 'student_name', this.value)"
+                                           placeholder="e.g. Blake Dell"
+                                           required>
+                                </div>
+                                
+                                <div class="date-grid">
+                                    <div class="form-group">
+                                        <label>Start Date *</label>
+                                        <input type="date" 
+                                               value="${reverseDateFormat(student.start_date)}" 
+                                               onchange="updateStudent(${student.id}, 'start_date', formatDate(this.value))">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>End Date *</label>
+                                        <input type="date" 
+                                               value="${reverseDateFormat(student.end_date)}" 
+                                               onchange="updateStudent(${student.id}, 'end_date', formatDate(this.value))">
+                                    </div>
+                                </div>
+                                
+                                <div class="lesson-grid">
+                                    <div class="form-group">
+                                        <label>Number of Lessons *</label>
+                                        <input type="number" 
+                                               value="${student.num_lessons}" 
+                                               onchange="updateStudent(${student.id}, 'num_lessons', this.value)"
+                                               placeholder="e.g. 4"
+                                               min="1"
+                                               required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Lesson Duration *</label>
+                                        <select onchange="updateStudent(${student.id}, 'lesson_duration', this.value)">
+                                            <option value="20" ${student.lesson_duration === '20' ? 'selected' : ''}>20 minutes</option>
+                                            <option value="30" ${student.lesson_duration === '30' ? 'selected' : ''}>30 minutes</option>
+                                            <option value="45" ${student.lesson_duration === '45' ? 'selected' : ''}>45 minutes</option>
+                                            <option value="60" ${student.lesson_duration === '60' ? 'selected' : ''}>60 minutes</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Notes (Optional)</label>
+                                    <textarea onchange="updateStudent(${student.id}, 'notes', this.value)"
+                                              placeholder="e.g. No lesson on 27/01/25 due to mock sats">${student.notes}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="generateCSV()" ${students.length === 0 ? 'disabled' : ''}>
+                        💾 Download CSV for ${currentSchool}
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateAllSchoolsCSV()" ${Object.keys(schools).length === 0 ? 'disabled' : ''}>
+                        📄 Download All Schools CSV
+                    </button>
+                </div>
+            `;
+        }
+        
+        function formatDate(dateValue) {
+            if (!dateValue) return '';
+            const date = new Date(dateValue);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear().toString().substr(-2);
+            return `${day}/${month}/${year}`;
+        }
+        
+        function reverseDateFormat(dateString) {
+            if (!dateString) return '';
+            const parts = dateString.split('/');
+            if (parts.length !== 3) return '';
+            const [day, month, year] = parts;
+            return `20${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+        }
+        
+        function generateCSVContent(studentsData) {
+            const headers = ['student_name', 'start_date', 'end_date', 'num_lessons', 'lesson_duration', 'notes'];
+            const rows = [headers.join(',')];
+            
+            studentsData.forEach(student => {
+                const row = headers.map(header => {
+                    let value = student[header] || '';
+                    // Escape commas and quotes in CSV
+                    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+                        value = '"' + value.replace(/"/g, '""') + '"';
+                    }
+                    return value;
+                });
+                rows.push(row.join(','));
+            });
+            
+            return rows.join('\n');
+        }
+        
+        function generateCSV() {
+            if (!currentSchool) return;
+            
+            const students = schools[currentSchool] || [];
+            const validStudents = students.filter(s => 
+                s.student_name.trim() && 
+                s.start_date && 
+                s.end_date && 
+                s.num_lessons
+            );
+            
+            if (validStudents.length === 0) {
+                alert('Please fill in all required fields for at least one student.');
+                return;
+            }
+            
+            const csv = generateCSVContent(validStudents);
+            downloadCSV(csv, `${currentSchool}_students_${new Date().toISOString().split('T')[0]}.csv`);
+        }
+        
+        function generateAllSchoolsCSV() {
+            let allStudents = [];
+            
+            Object.keys(schools).forEach(schoolName => {
+                const students = schools[schoolName] || [];
+                const validStudents = students.filter(s => 
+                    s.student_name.trim() && 
+                    s.start_date && 
+                    s.end_date && 
+                    s.num_lessons
+                );
+                allStudents = allStudents.concat(validStudents);
+            });
+            
+            if (allStudents.length === 0) {
+                alert('No valid students found across all schools.');
+                return;
+            }
+            
+            const csv = generateCSVContent(allStudents);
+            downloadCSV(csv, `all_schools_students_${new Date().toISOString().split('T')[0]}.csv`);
+        }
+        
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Initialize app
+        loadData();
+        
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:application/javascript;base64,Y29uc3QgQ0FDSEVfTkFNRSA9ICdwaWFuby1zdHVkZW50cy12MSc7CmNvbnN0IHVybHNUb0NhY2hlID0gWycuLyddOwoKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZXZlbnQgPT4gewogIGV2ZW50LndhaXRVbnRpbCgKICAgIGNhY2hlcy5vcGVuKENBQ0hFX05BTUUpCiAgICAgIC50aGVuKGNhY2hlID0+IGNhY2hlLmFkZEFsbCh1cmxzVG9DYWNoZSkpCiAgKTsKfSk7CgpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZXZlbnQgPT4gewogIGV2ZW50LnJlc3BvbmRXaXRoKAogICAgY2FjaGVzLm1hdGNoKGV2ZW50LnJlcXVlc3QpCiAgICAgIC50aGVuKHJlc3BvbnNlID0+IHJlc3BvbnNlIHx8IGZldGNoKGV2ZW50LnJlcXVlc3QpKQogICk7Cn0pOw==')
+            .then(() => console.log('Service Worker registered'))
+            .catch(err => console.log('Service Worker registration failed'));
+        }
+        
+        // PWA install prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button if not already installed
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                showInstallButton();
+            }
+        });
+        
+        function showInstallButton() {
+            const installBanner = document.createElement('div');
+            installBanner.innerHTML = `
+                <div style="background: #10b981; color: white; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; font-size: 0.9rem;">
+                    📱 Install this app for quick access! 
+                    <button onclick="installApp()" style="background: white; color: #10b981; border: none; padding: 5px 10px; border-radius: 15px; margin-left: 10px; font-weight: 600;">Install</button>
+                    <button onclick="this.parentElement.remove()" style="background: transparent; color: white; border: none; padding: 5px; margin-left: 5px;">✕</button>
+                </div>
+            `;
+            document.body.prepend(installBanner);
+        }
+        
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+        
+        // Handle new school input enter key
+        document.getElementById('newSchoolName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addSchool();
+            }
+        });
+    </script>
+</body>
+</html>
